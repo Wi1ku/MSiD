@@ -1,6 +1,7 @@
 import apiBroker
 import time
 import datetime
+import numpy as np
 
 pairs = [
     "BTC-USD",
@@ -27,18 +28,19 @@ def sim(trading_pair, starting_date, ending_date):
     print(count_rise_probability(data))
 
 
-def price_has_risen(open, close):
-    return close > open
-
-
 def count_rise_probability(data):
     a = 0
-    total_volume = 0
+    total_diff = 0
     for record in data:
-        if price_has_risen(float(record['open']), float(record['close'])):
-            a += record['volumefrom']
-        total_volume += record['volumefrom']
-    return a / total_volume
+        diff = float(record['open']) - float(record['close'])
+        record['diff'] = np.abs(diff)
+        if diff > 0:
+            a += diff
+        total_diff += record['diff']
+    print(a)
+    print(total_diff)
+
+    return a / total_diff
 
 
 if __name__ == '__main__':
